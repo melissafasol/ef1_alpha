@@ -8,7 +8,6 @@ import glob
 
 file_path = '/home/melissa/PREPROCESSING/ef1_alpha'
 
-
 def load_ef1_alpha_raw(file_path, animal_number, montage_name, head_stage_number):
     
     for animal_id in two_recordings:
