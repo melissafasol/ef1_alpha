@@ -6,14 +6,13 @@ from scipy.signal import decimate
 import mne
 import glob
 
-from ef1_alpha_properties import recordings_1_channels, one_recording_date_folders
+from ef1_alpha_properties import recordings_1_channels, one_recording_date_folders, channels_dict
 from open_ephys_functions import loadFolderToArray
 
 class LoadTetheredRaw(): 
     
-    def __init__(self, path, recording_type, save_path, one_recording_dict, one_recording_date_folders, channels_dict):
+    def __init__(self, path, save_path, one_recording_dict, one_recording_date_folders, channels_dict):
         self.path = path
-        self.recording_type = recording_type
         self.save_path = save_path
         self.one_recording_dict = one_recording_dict
         self.one_recording_date_folders = one_recording_date_folders
@@ -23,7 +22,7 @@ class LoadTetheredRaw():
         for dict_key, value in self.one_recording_dict.items():
                 if dict_key == channel_letter:
                     animal_ids = value
-                    print('saving A group' + str(animal_ids) + ' as npy')
+                    print('loading'  + str(animal_ids))
                     for anim_id in animal_ids:
                         one_recording_folder = self.one_recording_date_folders[anim_id]
                         print(one_recording_folder)
@@ -44,4 +43,6 @@ class LoadTetheredRaw():
 path = '/home/melissa/ef1_data/Grant_Recordings'
 save_path =  '/home/melissa/PREPROCESSING/ef1_alpha_recordings/one_recording'
 
-#tethered_to_npy(path = path, recording_type = 1, save_path = save_path)
+test_one_recording = LoadTetheredRaw(path = path, save_path= save_path, one_recording_dict=recordings_1_channels,
+                                     one_recording_date_folders=one_recording_date_folders, channels_dict=channels_dict)
+A1_array = test_one_recording.one_recording(channel_letter='A_1')
