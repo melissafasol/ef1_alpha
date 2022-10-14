@@ -9,30 +9,34 @@ import glob
 from ef1_alpha_properties import recordings_1_channels, one_recording_date_folders
 from open_ephys_functions import loadFolderToArray
 
+class LoadTetheredRaw(): 
+    
+    def __init__(self, path, recording_type, save_path):
+        self.path = path
+        self.recording_type = recording_type
+        self.save_path = save_path
 
-def tethered_to_npy(path, recording_type, save_path):
-
-    if recording_type == 1:
+    def one_recording(path, save_path):
         for dict_key, value in recordings_1_channels.items():
-            if dict_key == 'A':
-                animal_ids = value
-                print('saving A group' + str(animal_ids) + ' as npy')
-                for anim_id in animal_ids:
-                    one_recording_folder = one_recording_date_folders[anim_id]
-                    print(one_recording_folder)
-                    for one_recording in one_recording_folder:
-                        file_path = path + '/' + str(anim_id) + '/' + str(one_recording_folder)
-                        os.chdir(file_path)
-                        file_list = os.listdir(file_path) 
-                        channel_list = [2, 3, 7, 9]
-                        data= loadFolderToArray(file_path, channels = channel_list, chprefix = 'CH', dtype = float, session = '0', source = '100')
-                        os.chdir(save_path + '/A')
-                        np.save(str(anim_id) + '_A' + '.npy', data)
-                        print( str(anim_id) + 'saved')
+                if dict_key == 'A':
+                    animal_ids = value
+                    print('saving A group' + str(animal_ids) + ' as npy')
+                    for anim_id in animal_ids:
+                        one_recording_folder = one_recording_date_folders[anim_id]
+                        print(one_recording_folder)
+                        for one_recording in one_recording_folder:
+                            file_path = path + '/' + str(anim_id) + '/' + str(one_recording_folder)
+                            os.chdir(file_path)
+                            file_list = os.listdir(file_path) 
+                            channel_list = [2, 3, 7, 9]
+                            data= loadFolderToArray(file_path, channels = channel_list, chprefix = 'CH', dtype = float, session = '0', source = '100')
+                            os.chdir(save_path + '/A')
+                            np.save(str(anim_id) + '_A' + '.npy', data)
+                            print( str(anim_id) + 'saved')
                         
-            elif dict_key == 'A_1':
-                animal_ids = value
-                print('saving A_1 group' + str(animal_ids) + ' as npy')
+        elif dict_key == 'A_1':
+            animal_ids = value
+            print('saving A_1 group' + str(animal_ids) + ' as npy')
                 for anim_id in animal_ids:
                     one_recording_folder = one_recording_date_folders[anim_id]
                     print(one_recording_folder)
