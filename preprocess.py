@@ -2,6 +2,26 @@ import os
 import pandas as pd 
 import numpy as np
 
+#path for loading one recording
+path_1_recording = '/home/melissa/PREPROCESSING/EF1_ALPHA/one_recording'
+path_2_recording = 'home/melissa/PREPROCESSING/EF1_ALPHA/two_recording'
+list_files = os.listdir(path_1_recording)
+
+
+def load_npy_letter(folder_path, letter):
+    os.chdir(folder_path)
+    list_file_names = os.listdir(folder_path)
+    for file in list_file_names:
+        if file.endswith(letter + '.npy'):
+            example_file = np.load(file)
+            
+        else:
+            pass
+    
+    return example_file
+
+example_A = load_npy_letter(path_1_recording, letter = 'A')
+
 
 class ExtractBrainStateEF1ALPHA:
     
