@@ -14,7 +14,7 @@ class ExtractBrainStateEF1ALPHA:
 
     def discard_E_epochs(self):
         brain_state_indices = self.brain_state_file.loc[self.brain_state_file['brain_state'] == self.brain_state_letter]
-        discard_indices = self.brain_state_file.loc[self.brain_state_file['epoch_discard'] == 'E']
+        discard_indices = self.brain_state_file.loc[self.brain_state_file['epoch_discard_numbers'] == 'E']
         brain_state_indices_list = brain_state_indices.tolist()
         discard_indices_list = discard_indices.tolist()
         
