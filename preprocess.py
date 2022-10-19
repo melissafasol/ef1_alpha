@@ -70,7 +70,7 @@ class ExtractBrainStateEF1ALPHA:
         
         #function to select brain state of interest and remove indices marked with E
 
-    def remove_E_epochs(brain_state_file, brain_state_letter):
+    def remove_E_epochs(self, brain_state_file, brain_state_letter):
         
         brain_state_indices = brain_state_file.loc[brain_state_file['brain_state'] == brain_state_letter].index.tolist()
         discard_indices = brain_state_file.loc[brain_state_file['epoch_discard_numbers'] == 'E'].index.tolist()
@@ -81,7 +81,7 @@ class ExtractBrainStateEF1ALPHA:
         
         return new_indices
 
-    def get_epoch_indices(new_indices):
+    def get_epoch_indices(self, new_indices):
         epoch_indices = []
         starting_index = new_indices[0]
         
@@ -97,10 +97,7 @@ class ExtractBrainStateEF1ALPHA:
         
         return epoch_indices
 
-    def create_epoch_bins(brain_state_file, epoch_indices):
-        
-        sample_rate = 1000
-        epoch_length = 5*1000
+    def create_epoch_bins(self, brain_state_file, epoch_indices):
         
         time_start_values = []
         time_end_values = []
@@ -111,10 +108,10 @@ class ExtractBrainStateEF1ALPHA:
         for epoch_index in range(len(epoch_indices)):
             time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1], 1])
 
-        zipped_time_values = list(zip([int(element*sample_rate) for element in time_start_values],
-                                    [int(element*sample_rate) for element in time_end_values]))
+        zipped_time_values = list(zip([int(element*self.sample_rate) for element in time_start_values],
+                                    [int(element*self.sample_rate) for element in time_end_values]))
         
-        function_timebins = lambda epoch_start, epoch_end : list(range(epoch_start, epoch_end, epoch_length))
+        function_timebins = lambda epoch_start, epoch_end : list(range(epoch_start, epoch_end, self.epoch_length))
         
         timevalues_epochs = list(map(lambda x: function_timebins(x[0], x[1]), (zipped_time_values)))
         timevalues_array = list(np.concatenate(timevalues_epochs).flat)
