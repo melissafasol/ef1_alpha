@@ -78,7 +78,10 @@ def create_epoch_bins(new_indices):
         if new_indices[i] +1 != new_indices[i + 1]:
             epoch_indices.append([starting_index, new_indices[i]])
             starting_index = new_indices[i + 1]
-            
+        
+        else:
+            pass
+
     epoch_indices.append([starting_index, new_indices[-1]])
     
     return epoch_indices
