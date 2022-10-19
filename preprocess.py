@@ -6,33 +6,6 @@ import numpy as np
 recording_path = '/home/melissa/PREPROCESSING/EF1_ALPHA'
 brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/brain_state_folder'
 
-def load_npy_recordings(animal_id, folder_path, letter, recording_number):
-    if recording_number == 1:
-        folder_path = folder_path + '/one_recording'
-        os.chdir(folder_path)
-        list_file_names = os.listdir(folder_path)
-        for file in list_file_names:
-            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
-                one_recording_file = np.load(file)
-                return one_recording_file
-            else:
-                pass
-            
-    
-    if recording_number == 2:
-        os.chdir(folder_path + '/two_recording/Part_1')
-        list_file_names_1 = os.listdir(folder_path)
-        for file in list_file_names_1:
-            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
-                part_1 = np.load(file)
-        os.chdir(folder_path + '/two_recording/Part_2')
-        list_file_names_2 = os.listdir(folder_path)
-        for file in list_file_names_2:
-            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
-                part_2 = np.load(file)
-        
-        return part_1, part_2 
-    
 
 def load_brain_state_file(animal_id, folder_path, letter, recording_number):
     os.chdir(folder_path)
@@ -109,28 +82,42 @@ def create_epoch_bins(brain_state_file, epoch_indices):
 
 
  
-# class ExtractBrainStateEF1ALPHA:
+class ExtractBrainStateEF1ALPHA:
     
-#     sample_rate = 1000 
-#     epoch_length = int(sample_rate * 5)
+    sample_rate = 1000 
+    epoch_length = int(sample_rate * 5)
     
-#     def __init__(self, brain_state_file, brain_state_letter):
-#         self.brain_state_file = brain_state_file
-#         self.brain_state_letter = brain_state_letter
-
-#     def discard_E_epochs(self):
-#         brain_state_indices = self.brain_state_file.loc[self.brain_state_file['brain_state'] == self.brain_state_letter]
-#         discard_indices = self.brain_state_file.loc[self.brain_state_file['epoch_discard_numbers'] == 'E']
-#         brain_state_indices_list = brain_state_indices.tolist()
-#         discard_indices_list = discard_indices.tolist()
+    
+    def __init__(self, animal_id, folder_path, letter, recording_number):
+        self.animal_id = animal_id 
+        self.folder_path = folder_path 
+        self.letter = letter
+        self.recording_number = recording_number 
         
-#         def non_match_elements(list_a, list_b):
-#             non_match = []
-#             for i in list_a:
-#                 if i not in list_b:
-#                     non_match.append(i)
-#             return non_match
+    
+    def load_npy_recordings(self):
         
-#         new_brain_state_indices = non_match_elements(brain_state_indices_list, discard_indices_list)
-        
-#         return new_brain_state_indices
+        if self.recording_number == 1:
+            folder_path_1_rec = self.folder_path + '/one_recording'
+            os.chdir(folder_path_1_rec)
+            list_file_names = os.listdir(folder_path_1_rec)
+            for file in list_file_names:
+                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
+                    one_recording_file = np.load(file)
+                    return one_recording_file
+                else:
+                    pass
+         
+        if self.recording_number == 2:
+            os.chdir(self.folder_path + '/two_recording/Part_1')
+            list_file_names_1 = os.listdir(self.folder_path)
+            for file in list_file_names_1:
+                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
+                    part_1 = np.load(file)
+            os.chdir(self.folder_path + '/two_recording/Part_2')
+            list_file_names_2 = os.listdir(self.folder_path)
+            for file in list_file_names_2:
+                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
+                    part_2 = np.load(file)
+            
+            return part_1, part_2 
