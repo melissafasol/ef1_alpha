@@ -8,14 +8,16 @@ brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/brain_state_folder'
 
 def load_npy_recordings(animal_id, folder_path, letter, recording_number):
     if recording_number == 1:
-        os.chdir(folder_path + '/one_recording')
+        folder_path = folder_path + '/one_recording'
+        os.chdir(folder_path)
         list_file_names = os.listdir(folder_path)
         for file in list_file_names:
             if file.startswith(animal_id) and file.endswith(letter + '.npy'):
                 one_recording_file = np.load(file)
+                return one_recording_file
             else:
                 pass
-        return one_recording_file
+            
     
     if recording_number == 2:
         os.chdir(folder_path + '/two_recording/Part_1')
@@ -56,17 +58,12 @@ def load_brain_state_file(animal_id, folder_path, letter, recording_number):
 
 def remove_E_epochs(brain_state_file, brain_state_letter):
      
-     def non_match_elements(list_a, list_b):
-         non_match = []
-         for i in list_a:
-            if i not in list_b:
-                non_match.append(i)
-            
-            return non_match
-     
      brain_state_indices = brain_state_file.loc[brain_state_file['brain_state'] == brain_state_letter].index.tolist()
-     discard_indices = brain_state_file.loc[brain_state_file['epoch_discard+numbers'] == 'E'].index.tolist()
-     new_indices = non_match_elements(brain_state_indices, discard_indices)
+     discard_indices = brain_state_file.loc[brain_state_file['epoch_discard_numbers'] == 'E'].index.tolist()
+     new_indices = []
+     for i in brain_state_indices:
+         if i not in discard_indices:
+             new_indices.append(i)
      
      return new_indices
 
@@ -87,6 +84,10 @@ def get_epoch_indices(new_indices):
     return epoch_indices
 
 def create_epoch_bins(brain_state_file, epoch_indices):
+    
+    sample_rate = 1000
+    epoch_length = 5*1000
+    
     time_start_values = []
     time_end_values = []
     
@@ -94,9 +95,17 @@ def create_epoch_bins(brain_state_file, epoch_indices):
         time_start_values.append(brain_state_file.iloc[epoch_indices[epoch_index][0], 1])
     
     for epoch_index in range(len(epoch_indices)):
-        time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1], 2])
+        time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1], 1])
 
-    return time_start_values, time_end_values
+    zipped_time_values = list(zip([int(element*sample_rate) for element in time_start_values],
+                                  [int(element*sample_rate) for element in time_end_values]))
+    
+    function_timebins = lambda epoch_start, epoch_end : list(range(epoch_start, epoch_end, epoch_length))
+     
+    timevalues_epochs = list(map(lambda x: function_timebins(x[0], x[1]), (zipped_time_values)))
+    timevalues_array = list(np.concatenate(timevalues_epochs).flat)
+    timevalues_array = [int(x) for x in timevalues_array]
+    return timevalues_array
 
 
  
