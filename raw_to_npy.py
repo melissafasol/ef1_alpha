@@ -56,7 +56,7 @@ class LoadTetheredRaw():
 
 
 path = '/home/melissa/ef1_data/Grant_Recordings'
-save_path =  '/home/melissa/PREPROCESSING/ef1_alpha_recordings'
+save_path =  '/home/melissa/PREPROCESSING/EF1_ALPHA'
 
 
 tetheredraw = LoadTetheredRaw(path = path, save_path= save_path, channels_dict=channels_dict)
