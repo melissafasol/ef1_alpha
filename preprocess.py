@@ -70,7 +70,7 @@ def remove_E_epochs(brain_state_file, brain_state_letter):
      
      return new_indices
 
-def create_epoch_bins(new_indices):
+def get_epoch_indices(new_indices):
     epoch_indices = []
     starting_index = new_indices[0]
     
@@ -86,6 +86,17 @@ def create_epoch_bins(new_indices):
     
     return epoch_indices
 
+def create_epoch_bins(brain_state_file, epoch_indices):
+    time_start_values = []
+    time_end_values = []
+    
+    for epoch_index in range(len(epoch_indices)):
+        time_start_values.append(brain_state_file.iloc[epoch_indices[epoch_index][0], 1])
+    
+    for epoch_index in range(len(epoch_indices)):
+        time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1], 2])
+
+    return time_start_values, time_end_values
 
 
  
