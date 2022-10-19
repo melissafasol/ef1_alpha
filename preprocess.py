@@ -52,6 +52,24 @@ def load_brain_state_file(animal_id, folder_path, letter, recording_number):
         return part_1_brain_state, part_2_brain_state
 
 
+#function to select brain state of interest and remove indices marked with E
+
+def remove_E_epochs(brain_state_file, brain_state_letter):
+     
+     def non_match_elements(list_a, list_b):
+         non_match = []
+         for i in list_a:
+            if i not in list_b:
+                non_match.append(i)
+            
+            return non_match
+     
+     brain_state_indices = brain_state_file.loc[brain_state_file['brain_state'] == brain_state_letter].index.tolist()
+     discard_indices = brain_state_file.loc[brain_state_file['epoch_discard+numbers'] == 'E'].index.tolist()
+     new_indices = non_match_elements(brain_state_indices, discard_indices)
+     
+     return new_indices
+
 class ExtractBrainStateEF1ALPHA:
     
     sample_rate = 1000 
