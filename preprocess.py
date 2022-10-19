@@ -2,25 +2,54 @@ import os
 import pandas as pd 
 import numpy as np
 
-#path for loading one recording
-path_1_recording = '/home/melissa/PREPROCESSING/EF1_ALPHA/one_recording'
-path_2_recording = 'home/melissa/PREPROCESSING/EF1_ALPHA/two_recording'
-list_files = os.listdir(path_1_recording)
+#path for loading recording files 
+recording_path = '/home/melissa/PREPROCESSING/EF1_ALPHA'
+brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/brain_state_folder'
 
-
-def load_npy_letter(folder_path, letter):
-    os.chdir(folder_path)
-    list_file_names = os.listdir(folder_path)
-    for file in list_file_names:
-        if file.endswith(letter + '.npy'):
-            example_file = np.load(file)
-            
-        else:
-            pass
+def load_npy_recordings(animal_id, folder_path, letter, recording_number):
+    if recording_number == 1:
+        os.chdir(folder_path + '/one_recording')
+        list_file_names = os.listdir(folder_path)
+        for file in list_file_names:
+            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
+                one_recording_file = np.load(file)
+            else:
+                pass
+        return one_recording_file
     
-    return example_file
+    if recording_number == 2:
+        os.chdir(folder_path + '/two_recording/Part_1')
+        list_file_names_1 = os.listdir(folder_path)
+        for file in list_file_names_1:
+            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
+                part_1 = np.load(file)
+        os.chdir(folder_path + '/two_recording/Part_2')
+        list_file_names_2 = os.listdir(folder_path)
+        for file in list_file_names_2:
+            if file.startswith(animal_id) and file.endswith(letter + '.npy'):
+                part_2 = np.load(file)
+        
+        return part_1, part_2 
+    
 
-example_A = load_npy_letter(path_1_recording, letter = 'A')
+def load_brain_state_file(animal_id, folder_path, letter, recording_number):
+    os.chdir(folder_path)
+    state_file_names = os.listdir(folder_path)
+    if recording_number == 1:
+        for file in state_file_names:
+            if file.startswith(animal_id) and file.endswith(letter + '.csv'):
+                brain_state_file = pd.read_csv(file)
+        
+        return brain_state_file
+    
+    if recording_number == 2:
+        for file in state_file_names:
+            if file.startswith(animal_id) and file.endswith(letter + '_part_1.csv'):
+                part_1_brain_state = pd.read_csv(file)
+            if file.startswith(animal_id) and file.endswith(letter + '_part_2.csv'):
+                part_2_brain_state = pd.read_csv(file)
+        
+        return part_1_brain_state, part_2_brain_state
 
 
 class ExtractBrainStateEF1ALPHA:
