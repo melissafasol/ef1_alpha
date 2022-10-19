@@ -70,28 +70,44 @@ def remove_E_epochs(brain_state_file, brain_state_letter):
      
      return new_indices
 
-class ExtractBrainStateEF1ALPHA:
+def create_epoch_bins(new_indices):
+    epoch_indices = []
+    starting_index = new_indices[0]
     
-    sample_rate = 1000 
-    epoch_length = int(sample_rate * 5)
+    for i in range(len(new_indices)-1):
+        if new_indices[i] +1 != new_indices[i + 1]:
+            epoch_indices.append([starting_index, new_indices[i]])
+            starting_index = new_indices[i + 1]
+            
+    epoch_indices.append([starting_index, new_indices[-1]])
     
-    def __init__(self, brain_state_file, brain_state_letter):
-        self.brain_state_file = brain_state_file
-        self.brain_state_letter = brain_state_letter
+    return epoch_indices
 
-    def discard_E_epochs(self):
-        brain_state_indices = self.brain_state_file.loc[self.brain_state_file['brain_state'] == self.brain_state_letter]
-        discard_indices = self.brain_state_file.loc[self.brain_state_file['epoch_discard_numbers'] == 'E']
-        brain_state_indices_list = brain_state_indices.tolist()
-        discard_indices_list = discard_indices.tolist()
+
+
+ 
+# class ExtractBrainStateEF1ALPHA:
+    
+#     sample_rate = 1000 
+#     epoch_length = int(sample_rate * 5)
+    
+#     def __init__(self, brain_state_file, brain_state_letter):
+#         self.brain_state_file = brain_state_file
+#         self.brain_state_letter = brain_state_letter
+
+#     def discard_E_epochs(self):
+#         brain_state_indices = self.brain_state_file.loc[self.brain_state_file['brain_state'] == self.brain_state_letter]
+#         discard_indices = self.brain_state_file.loc[self.brain_state_file['epoch_discard_numbers'] == 'E']
+#         brain_state_indices_list = brain_state_indices.tolist()
+#         discard_indices_list = discard_indices.tolist()
         
-        def non_match_elements(list_a, list_b):
-            non_match = []
-            for i in list_a:
-                if i not in list_b:
-                    non_match.append(i)
-            return non_match
+#         def non_match_elements(list_a, list_b):
+#             non_match = []
+#             for i in list_a:
+#                 if i not in list_b:
+#                     non_match.append(i)
+#             return non_match
         
-        new_brain_state_indices = non_match_elements(brain_state_indices_list, discard_indices_list)
+#         new_brain_state_indices = non_match_elements(brain_state_indices_list, discard_indices_list)
         
-        return new_brain_state_indices
+#         return new_brain_state_indices
