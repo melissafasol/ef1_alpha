@@ -1,5 +1,7 @@
 debug.log
+__pycache__
 .ipynb_checkpoints 
 convert_raw_to_npy.ipynb 
-__pycache__
 brain_state_extraction.ipynb
+
+
