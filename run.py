@@ -23,30 +23,56 @@ recordings_letters_2 = ['A', 'A_1', 'B', 'B_1' 'C', 'D']
 one_recording = []
 two_recording = []
 
-brainstates = ['W', 'R', 'N']
+brainstates = ['R', 'N'] #W
 
-# for headstage_letters in recordings_letters_1:
-#     for anim_id in recordings_1_channels[headstage_letters]:
-#         preprocessing_steps = ExtractBrainStateEF1ALPHA
 
-for brainstate in brainstates:
+# for brainstate in brainstates:
+#     for headstage_letters in recordings_letters_1:
+#         for anim_id in recordings_1_channels[headstage_letters]:
+#             print('processing ' + str(anim_id))
+#             preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path, 
+#                                                             headstage_letters, recording_number=1)
+#             npy_recording = preprocessing_steps.load_npy_recordings()
+#             br_state_file = preprocessing_steps.load_brain_state_file()
+#             if br_state_file is not None:
+#                 br_state_indices = preprocessing_steps.remove_E_epochs(br_state_file, brain_state_letter=brainstate)
+#                 epoch_indices = preprocessing_steps.get_epoch_indices(br_state_indices)
+#                 epoch_bins = preprocessing_steps.create_epoch_bins(br_state_file, epoch_indices)    
+#                 if npy_recording is not None:
+#                     for column, channel in zip(npy_recording.T, channels_dict[headstage_letters]):
+#                         filter_steps = Filter(column, epoch_bins)
+#                         filtered_data = filter_steps.butter_bandpass()
+#                         power_steps = PowerSpectrum(filtered_data)
+#                         power_array, frequency_array = power_steps.average_psd()
+#                         dict_data = {'Animal_ID': [anim_id]*len(power_array), 'Headstage':[headstage_letters]*len(power_array),
+#                             'Channel': [channel]*len(power_array), 'Brainstate': [brainstate]*len(power_array),
+#                             'Power': power_array, 'Frequency': frequency_array}
+#                         one_recording.append(pd.DataFrame(data = dict_data))
+#     merged_power_file = pd.concat(one_recording, axis = 0).drop_duplicates().reset_index(drop = True)
+#     os.chdir('/home/melissa/RESULTS/EF1_ALPHA/1_REC')
+#     merged_power_file.to_csv(str(brainstate) + '_1_rec.csv', index = True)
+#     print('data saved for one recording ' + str(brainstate))
+
+for brainstate in brainstates:         
     for headstage_letters in recordings_letters_2:
         for anim_id in recordings_2_channels[headstage_letters]:
+            print(anim_id)
+            print(headstage_letters)
             preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path, 
                                                             headstage_letters, recording_number=2)
             part_1, part_2 = preprocessing_steps.load_npy_recordings()
             part_1_br_state, part_2_br_state = preprocessing_steps.load_brain_state_file()
-            if part_1 and part_2 is not None:
+            if part_1_br_state and part_2_br_state is not None:
                 epoch_indices_1 = preprocessing_steps.remove_E_epochs(part_1_br_state, brain_state_letter=brainstate)
                 epoch_indices_2 = preprocessing_steps.remove_E_epochs(part_2_br_state, brain_state_letter=brainstate)
                 epoch_bins_1 = preprocessing_steps.get_epoch_indices(part_1_br_state, epoch_indices_1)
                 epoch_bins_2 = preprocessing_steps.get_epoch_indices(part_2_br_state, epoch_indices_2)
-                for column, channel in zip(part_1_br_state.T, channels_dict[headstage_letters]):
+                for column, channel in zip(part_1.T, channels_dict[headstage_letters]):
                     filter_steps = Filter(column, epoch_bins_1)
                     filtered_data_1 = filter_steps.butter_bandpass()
                     power_steps = PowerSpectrum(filtered_data_1)
                     power_array_part_1, frequency_array_part_1 = power_steps.average_psd()
-                for column, channel in zip(part_2_br_state.T, channels_dict[headstage_letters]):
+                for column, channel in zip(part_2.T, channels_dict[headstage_letters]):
                     filter_steps = Filter(column, epoch_bins_2)
                     filtered_data_2 = filter_steps.butter_bandpass()
                     power_steps = PowerSpectrum(filtered_data_2)
@@ -54,8 +80,8 @@ for brainstate in brainstates:
                 average_power_array = average_power_df(power_array_part_1, power_array_part_2)
                 dict_data = {'Animal_ID': [anim_id]*len(average_power_array), 'Headstage':[headstage_letters]*len(average_power_array),
                             'Channel': [channel]*len(average_power_array), 'Brainstate': [brainstate]*len(average_power_array),
-                            'Power': average_power_array, 'Frequency': frequency_array_part_1,}
+                            'Power': average_power_array, 'Frequency': frequency_array_part_1}
                 two_recording.append(pd.DataFrame(data=dict_data))
-    merged_power_file = pd.conctenate(one_recording, axis = 0).drop_duplicates().reset_index(drop = True)
+    merged_power_file = pd.concat(two_recording, axis = 0).drop_duplicates().reset_index(drop = True)
     os.chdir('/home/melissa/RESULTS/EF1_ALPHA/2_REC')
     merged_power_file.to_csv(str(brainstate) + '_2_rec.csv', index = True)
