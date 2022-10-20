@@ -34,16 +34,18 @@ class ExtractBrainStateEF1ALPHA:
                 else:
                     pass
          
-        if self.recording_number == 2:
+        elif self.recording_number == 2:
             os.chdir(self.recording_folder_path + '/two_recording/Part_1')
-            list_file_names_1 = os.listdir(self.recording_folder_path)
+            list_file_names_1 = os.listdir(self.recording_folder_path + '/two_recording/Part_1')
             for file in list_file_names_1:
-                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
+                if file.startswith(self.animal_id) and file.endswith('part_1_' + self.letter + '.npy'):
+                    print(file)
                     part_1 = np.load(file)
             os.chdir(self.recording_folder_path + '/two_recording/Part_2')
-            list_file_names_2 = os.listdir(self.recording_folder_path)
+            list_file_names_2 = os.listdir(self.recording_folder_path + '/two_recording/Part_2')
             for file in list_file_names_2:
-                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
+                if file.startswith(self.animal_id) and file.endswith('part_2_'+ self.letter + '.npy'):
+                    print(file)
                     part_2 = np.load(file)
                     return part_1, part_2 
         
