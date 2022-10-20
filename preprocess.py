@@ -35,18 +35,17 @@ class ExtractBrainStateEF1ALPHA:
                     pass
          
         if self.recording_number == 2:
-            os.chdir(self.folder_path + '/two_recording/Part_1')
-            list_file_names_1 = os.listdir(self.folder_path)
+            os.chdir(self.recording_folder_path + '/two_recording/Part_1')
+            list_file_names_1 = os.listdir(self.recording_folder_path)
             for file in list_file_names_1:
                 if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
                     part_1 = np.load(file)
-            os.chdir(self.folder_path + '/two_recording/Part_2')
-            list_file_names_2 = os.listdir(self.folder_path)
+            os.chdir(self.recording_folder_path + '/two_recording/Part_2')
+            list_file_names_2 = os.listdir(self.recording_folder_path)
             for file in list_file_names_2:
                 if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
                     part_2 = np.load(file)
-            
-            return part_1, part_2 
+                    return part_1, part_2 
         
         
     def load_brain_state_file(self):
@@ -56,17 +55,15 @@ class ExtractBrainStateEF1ALPHA:
             for file in state_file_names:
                 if file.startswith(self.animal_id) and file.endswith(self.letter + '.csv'):
                     brain_state_file = pd.read_csv(file)
-            
-            return brain_state_file
+                    return brain_state_file
         
-        if self.recording_number == 2:
+        elif self.recording_number == 2:
             for file in state_file_names:
                 if file.startswith(self.animal_id) and file.endswith(self.letter + '_part_1.csv'):
                     part_1_brain_state = pd.read_csv(file)
                 if file.startswith(self.animal_id) and file.endswith(self.letter + '_part_2.csv'):
                     part_2_brain_state = pd.read_csv(file)
-            
-            return part_1_brain_state, part_2_brain_state
+                    return part_1_brain_state, part_2_brain_state
         
         #function to select brain state of interest and remove indices marked with E
 
