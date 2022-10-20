@@ -21,7 +21,7 @@ class ExtractBrainStateEF1ALPHA:
         self.recording_number = recording_number 
         
     
-    def load_npy_recordings(self):
+    def load_npy_recording(self):
         
         if self.recording_number == 1:
             folder_path_1_rec = self.recording_folder_path + '/one_recording'
@@ -34,20 +34,18 @@ class ExtractBrainStateEF1ALPHA:
                 else:
                     pass
          
-        elif self.recording_number == 2:
+        if self.recording_number == 2:
             os.chdir(self.recording_folder_path + '/two_recording/Part_1')
             list_file_names_1 = os.listdir(self.recording_folder_path + '/two_recording/Part_1')
             for file in list_file_names_1:
-                if file.startswith(self.animal_id) and file.endswith('part_1_' + self.letter + '.npy'):
-                    print(file)
+                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
                     part_1 = np.load(file)
             os.chdir(self.recording_folder_path + '/two_recording/Part_2')
             list_file_names_2 = os.listdir(self.recording_folder_path + '/two_recording/Part_2')
             for file in list_file_names_2:
-                if file.startswith(self.animal_id) and file.endswith('part_2_'+ self.letter + '.npy'):
-                    print(file)
+                if file.startswith(self.animal_id) and file.endswith(self.letter + '.npy'):
                     part_2 = np.load(file)
-                    return part_1, part_2 
+                    return part_1, part_2
         
         
     def load_brain_state_file(self):
@@ -61,11 +59,9 @@ class ExtractBrainStateEF1ALPHA:
         
         elif self.recording_number == 2:
             for file in state_file_names:
-                if file.startswith(self.animal_id) and file.endswith(self.letter + '_part_1.csv'):
-                    part_1_brain_state = pd.read_csv(file)
-                if file.startswith(self.animal_id) and file.endswith(self.letter + '_part_2.csv'):
-                    part_2_brain_state = pd.read_csv(file)
-                    return part_1_brain_state, part_2_brain_state
+                part_1_brain_state = pd.read_csv(self.animal_id + '_' + self.letter + '_part_1.csv')
+                part_2_brain_state = pd.read_csv(self.animal_id + '_' + self.letter + '_part_2.csv')
+                return part_1_brain_state, part_2_brain_state
         
         #function to select brain state of interest and remove indices marked with E
 
