@@ -21,7 +21,7 @@ class ExtractBrainStateEF1ALPHA:
         self.recording_number = recording_number 
         
     
-    def load_npy_recording(self):
+    def load_npy_recordings(self):
         
         if self.recording_number == 1:
             folder_path_1_rec = self.recording_folder_path + '/one_recording'
@@ -59,7 +59,7 @@ class ExtractBrainStateEF1ALPHA:
         
         elif self.recording_number == 2:
             for file in state_file_names:
-                part_1_brain_state = pd.read_csv(self.animal_id + '_' + self.letter + '_part_1.csv')
+                part_1_brain_state = pd.read_csv(self.animal_id  + '_' + self.letter + '_part_1.csv')
                 part_2_brain_state = pd.read_csv(self.animal_id + '_' + self.letter + '_part_2.csv')
                 return part_1_brain_state, part_2_brain_state
         
@@ -84,7 +84,6 @@ class ExtractBrainStateEF1ALPHA:
             if new_indices[i] +1 != new_indices[i + 1]:
                 epoch_indices.append([starting_index, new_indices[i]])
                 starting_index = new_indices[i + 1]
-            
             else:
                 pass
 
