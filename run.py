@@ -23,11 +23,12 @@ recordings_letters_2 = ['A', 'A_1', 'B', 'B_1', 'C', 'D']
 one_recording = []
 two_recording = []
 
-brainstates = ['W', 'N', 'R']
+brainstates = ['R']
 
 
 for brainstate in brainstates:
     for headstage_letters in recordings_letters_1:
+        print(headstage_letters)
         for anim_id in recordings_1_channel[headstage_letters]:
             print('processing ' + str(anim_id))
             preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path, 
@@ -44,9 +45,10 @@ for brainstate in brainstates:
                         filtered_data = filter_steps.butter_bandpass()
                         power_steps = PowerSpectrum(filtered_data)
                         power_array, frequency_array = power_steps.average_psd()
-                        dict_data = {'Animal_ID': [anim_id]*len(power_array), 'Headstage':[headstage_letters]*len(power_array),
+                        dict_data = {'Animal_ID': [anim_id + headstage_letters]*len(power_array), 'Headstage':[headstage_letters]*len(power_array),
                             'Channel': [channel]*len(power_array), 'Brainstate': [brainstate]*len(power_array),
                             'Power': power_array, 'Frequency': frequency_array}
+                        df_test = pd.DataFrame(data = dict_data)
                         one_recording.append(pd.DataFrame(data = dict_data))
     merged_power_file = pd.concat(one_recording, axis = 0).drop_duplicates().reset_index(drop = True)
     os.chdir('/home/melissa/RESULTS/EF1_ALPHA/1_REC')
@@ -79,7 +81,7 @@ for brainstate in brainstates:
                     power_steps = PowerSpectrum(filtered_data_2)
                     power_array_part_2, frequency_array_part_2 = power_steps.average_psd()
                 average_power_array = average_power_df(power_array_part_1, power_array_part_2)
-                dict_data = {'Animal_ID': [anim_id]*len(average_power_array), 'Headstage':[headstage_letters]*len(average_power_array),
+                dict_data = {'Animal_ID': [anim_id + headstage_letters]*len(average_power_array), 'Headstage':[headstage_letters]*len(average_power_array),
                             'Channel': [channel]*len(average_power_array), 'Brainstate': [brainstate]*len(average_power_array),
                             'Power': average_power_array, 'Frequency': frequency_array_part_1}
                 print('data saved for ' + str(anim_id))
