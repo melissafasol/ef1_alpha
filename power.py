@@ -4,8 +4,8 @@ import scipy
 
 class PowerSpectrum:
     
-    sampling_rate = 250.4
-    nperseg = 1252
+    sampling_rate = 1000
+    nperseg = 5000
     
     def __init__(self, data_without_noise):
         self.data_without_noise = data_without_noise
