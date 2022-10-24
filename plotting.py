@@ -31,10 +31,30 @@ def build_genotype_df(results_dataframe, mutant_list):
     
     return final_dataframe
 
+#parsing out individual channels
+
+def separate_by_channel(df, channel_number_list):
+    channel_1 = df[df['Channel'] == channel_number_list[0]]
+    channel_2 = df[df['Channel'] == channel_number_list[1]]
+    channel_3 = df[df['Channel'] == channel_number_list[2]]
+    channel_4 = df[df['Channel'] == channel_number_list[3]]    
+
+    return channel_1, channel_2, channel_3, channel_4
+
 #plot average genotype in selective channels 
 
 def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, data_rem, data_nrem, data_wake,
-                                 save_path ):
+                                 ylim_lower, ylim_upper, save_path ):
+    
+    '''
+    channel_number = 2
+    color_list = ['orange', 'blue']
+    hue_order_list = ['EF1', 'WT']
+    data_rem = dataframe containing rem data
+    ylim_lower = 10**-2
+    ylim_upper = 10**5
+    save_path = path to save folder
+    '''
     
     sns.set_style("white") 
     colors = color_list 
@@ -52,7 +72,7 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
     sns.despine()
     plt.yscale('log')
     plt.xlim(1, 100)
-    #plt.ylim(10**-2, 10**)
+    plt.ylim(ylim_lower, ylim_upper)
 
     plt.suptitle('Channel ' + str(channel_number), fontsize = 'x-large', fontweight = 'bold')
     line_rem.title.set_text('REM')
@@ -61,5 +81,5 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
 
     os.chdir(save_path )
     plt.savefig('channel_' + str(channel_number) + '_average_genotype.jpg')
-    return plt.plot()
+    
 
