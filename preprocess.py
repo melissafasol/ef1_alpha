@@ -111,3 +111,43 @@ class ExtractBrainStateEF1ALPHA:
         timevalues_array = list(np.concatenate(timevalues_epochs).flat)
         timevalues_array = [int(x) for x in timevalues_array]
         return timevalues_array
+
+def preprocessing_steps_1(brainstate_list, headstage_dict, animal_id_list,
+                        recording_path, brain_state_path, recording_number):
+    '''brainstate_list = ['W', 'N', 'R'],
+    headstage_dict = {'A': [2, 3, 7, 9]},
+    animal_id_list = {'A': ['191125']},
+    recording_path = path_to_npy_files
+    br_state_path = path_to_brainstate
+    recording_number = 1'''
+    
+    for brainstate in brainstate_list:
+        for headstage in headstage_dict:
+            for anim_id in animal_id_list[headstage]:
+                print('preprocessing' + str(anim_id))
+                preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path,
+                                                               headstage, recording_number)
+                npy_recording = preprocessing_steps.load_npy_recordings()
+                br_state_file = preprocessing_steps.load_brain_state_file()
+                print('preprocessing complete for animal id')
+                return npy_recording, br_state_file
+
+def preprocessing_steps_2(brainstate_list, headstage_dict, animal_id_list,
+                        recording_path, brain_state_path, recording_number):
+    '''brainstate_list = ['W', 'N', 'R'],
+    headstage_dict = {'A': [2, 3, 7, 9]},
+    animal_id_list = {'A': ['191125']},
+    recording_path = path_to_npy_files
+    br_state_path = path_to_brainstate
+    recording_number = 2'''
+    
+    for brainstate in brainstate_list:
+        for headstage in headstage_dict:
+            for anim_id in animal_id_list[headstage]:
+                print('preprocessing' + str(anim_id))
+                preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path,
+                                                               headstage, recording_number)
+                part_1, part_2 = preprocessing_steps.load_npy_recordings()
+                br_state_file_1, br_state_file_2 = preprocessing_steps.load_brain_state_file()
+                print('preprocessing complete for animal id')
+                return part_1, part_2, br_state_file_1, br_state_file_2
