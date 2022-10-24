@@ -27,6 +27,6 @@ two_recording = []
 
 brainstates = ['W', 'R', 'N']
 
-br_file_1, br_file_2 = preprocessing_steps_1(brainstate_list = brainstates ,headstage_dict = recordings_letters_1,
+br_file_1 = preprocessing_steps_1(brainstate_list = brainstates ,headstage_dict = recordings_letters_1,
                                             animal_id_list = recordings_1_channel, recording_path = recording_path_npy,
                                             brain_state_path = brain_state_path, recording_number = 1)
