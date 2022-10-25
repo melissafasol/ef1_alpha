@@ -41,6 +41,15 @@ def separate_by_channel(df, channel_number_list):
 
     return channel_1, channel_2, channel_3, channel_4
 
+
+#parsing out by genotype
+
+def separate_by_genotype(df, genotype, wildtype):
+    mutant_df = df[df['Genotype'] == genotype]
+    wildtype_df = df[df['Genotype'] == wildtype]
+    
+    return mutant_df, wildtype_df
+
 #plot average genotype in selective channels 
 
 def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, data_rem, data_nrem, data_wake,
@@ -62,11 +71,14 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
 
     #f.suptitle('REM', fontsize = 36)
     fig, ax = plt.subplots(1,3, figsize=(20,10), sharex = True, sharey=True)
-    line_rem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_rem, palette= colors, linewidth = 2, ax = ax[0])
+    line_rem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_rem, 
+                            palette= colors, linewidth = 2, ax = ax[0])
     ax[0].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
-    line_nrem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_nrem, palette= colors, linewidth = 2, ax = ax[1])
+    line_nrem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_nrem, 
+                             palette= colors, linewidth = 2, ax = ax[1])
     ax[1].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
-    line_wake = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_wake, palette= colors, linewidth = 2, ax = ax[2])
+    line_wake = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_wake, 
+                             palette= colors, linewidth = 2, ax = ax[2])
     ax[2].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
 
     sns.despine()
@@ -82,4 +94,32 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
     os.chdir(save_path )
     plt.savefig('channel_' + str(channel_number) + '_average_genotype.jpg')
     
+def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path):
+    wt_plot_list = ['191125A', '191126A', '191107A', '191108A', '191104B', '210422B_1',
+                '210423B_1', '210705C', '210706C', '191216C', '210422D', '210423D']
+    
+    def pos_idx_to_animal_idx(row_idx, col_idx):
+        return row_idx * 4 + col_idx
+    
+    sns.set_style("white") 
+    fig, axs = plt.subplots(3,4, figsize=(10,10), sharex = True, sharey=True)
+    
+    palette_channel = ['orangered', 'darkred', 'teal', 'darkblue']
+    
+    for row_idx in range(3):
+        for col_idx in range(4):
+            animal_idx = pos_idx_to_animal_idx(row_idx, col_idx)
+            animal_data = dataframe_to_plot[dataframe_to_plot["Animal_ID"] == wt_plot_list[animal_idx]]
+            sns.lineplot(data=animal_data, x='Frequency', y='Power', hue='Channel', palette=palette_channel, ax=axs[row_idx, col_idx])
+            #axs[row_idx, col_idx].text(0.5, 0.5, wt_plot_list[animal_idx], fontsize=12) #test that plt functions are rendering correctly 
+    
+    plt.suptitle(str(genotype) + ' ' + str(sleepstage), fontsize = 'x-large') 
 
+    # Adjust subplots so that titles don't overlap
+    sns.despine()
+    plt.yscale('log')
+    axs.set_xlim(1, 100)
+    axs.set_ylim(10**-2, 10**5)
+    axs.set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
+    os.chdir(save_path)
+    plt.savefig(str(genotype) + '_' + str(sleepstage) + '_channelaverage' + '.jpg', bbox_inches = 'tight')
