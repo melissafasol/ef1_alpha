@@ -6,9 +6,6 @@ import scipy.stats as stats
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from scripts.ef1_alpha_properties import all_animals
-
-
 
 #building genotype function
 def build_genotype_df(results_dataframe, mutant_list, wt_list):
@@ -100,11 +97,58 @@ def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data
     plt.savefig(str(channel_group) + '_average_genotype.jpg')
     
 def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
-    wt_plot_list = ['191125A', '191126A', '191107A', '191108A', '191104B', '210422B_1',
-                '210423B_1', '210705C', '210706C', '191216C', '210422D', '210423D']
+    wt_plot_list = ['210423D', '210705C', '210706C', '191216C', '191125A', '191126A', '191107A', 
+                    '191104B', '191108A', '210422B_1', '210423B_1', '191217C', '210422D']
     
     def pos_idx_to_animal_idx(row_idx, col_idx):
         return row_idx * 4 + col_idx
+    
+    sns.set_style("white") 
+    fig, axs = plt.subplots(4,4, figsize=(30,20), sharex = True, sharey=True)
+    
+    for row_idx in range(4):
+        for col_idx in range(4):
+            animal_idx = pos_idx_to_animal_idx(row_idx, col_idx)
+            animal_data = dataframe_to_plot[dataframe_to_plot["Animal_ID"] == wt_plot_list[animal_idx]]
+            #sns.lineplot(data=animal_data, x='Frequency', y='Power', hue='Channel', ax=axs[row_idx, col_idx],palette = palette_list)
+            axs[row_idx, col_idx].text(0.5, 0.5, wt_plot_list[animal_idx], fontsize=12) #test that plt functions are rendering correctly 
+    
+    plt.suptitle(str(genotype) + ' ' + str(sleepstage), fontsize = 30, fontweight = 'bold') 
+
+    # Adjust subplots so that titles don't overlap
+    sns.despine()
+    plt.yscale('log')
+    axs[2, 2].set_xlim(1, 100)
+    axs[2, 2].set_ylim(10**-2, 10**5)
+    axs[0,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[1,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[2,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[2,0].set(xlabel = 'Frequency (Hz)')
+    axs[2,1].set(xlabel = 'Frequency (Hz)')
+    axs[2,2].set(xlabel = 'Frequency (Hz)')
+    axs[2,3].set(xlabel = 'Frequency (Hz)')
+    
+    handles, labels = axs[0, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    handles, labels = axs[1, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    handles, labels = axs[2, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    
+    for row_idx in range(3):
+        for col_idx in range(4):
+                axs[row_idx, col_idx].set_title(wt_plot_list[pos_idx_to_animal_idx(row_idx, col_idx)], 
+                                                fontsize = 10, fontweight = 'bold')
+    os.chdir(save_path)
+    plt.savefig(str(genotype) + '_' + str(sleepstage) + '_channelaverage' + '.jpg', bbox_inches = 'tight')
+
+def plot_individual_animals_mutant(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
+    mutant_plot_list = ['210705B', '210705A', '210706A', '210706B', '191216A_1', '191217A_1', '191216B',
+                                    '191217B', '210429C','210430C', '210705D', '210706D']
+    print(len(mutant_plot_list))
+    
+    def pos_idx_to_animal_idx(row_idx, col_idx):
+        return row_idx * 5 + col_idx #5 = number of columns 
     
     sns.set_style("white") 
     fig, axs = plt.subplots(3,4, figsize=(30,20), sharex = True, sharey=True)
@@ -144,3 +188,8 @@ def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_pat
                                                 fontsize = 10, fontweight = 'bold')
     os.chdir(save_path)
     plt.savefig(str(genotype) + '_' + str(sleepstage) + '_channelaverage' + '.jpg', bbox_inches = 'tight')
+
+
+wt_plot_list = ['210423D', '210705C', '210706C', '191216C', '191125A', '191126A', '191107A', 
+                            '191104B', '191108A', '210422B_1', '210423B_1', '191217C', '210422D']
+print(len(wt_plot_list))

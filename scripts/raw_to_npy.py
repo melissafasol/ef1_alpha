@@ -6,9 +6,9 @@ from scipy.signal import decimate
 import mne
 import glob
 
-from ef1_alpha_properties import recordings_1_channels, one_recording_date_folders, channels_dict
-from ef1_alpha_properties import recordings_2_channels 
-from open_ephys_functions import loadFolderToArray
+from scripts.ef1_alpha_properties import recordings_1_channels, one_recording_date_folders, channels_dict
+from scripts.ef1_alpha_properties import recordings_2_channels 
+from scripts.open_ephys_functions import loadFolderToArray
 
 class LoadTetheredRaw(): 
     
