@@ -6,24 +6,25 @@ import scipy.stats as stats
 import matplotlib.colors as mcolors
 import seaborn as sns
 
+from ef1_alpha_properties import all_animals
+
 
 
 #building genotype function
-def build_genotype_df(results_dataframe, mutant_list):
+def build_genotype_df(results_dataframe, mutant_list, wt_list):
     '''build_genotype_df(results_dataframe, mutant_list, gender_list, animal_line) takes dataframe and adds a column with genotypes to the dataframe'''
     int_mutant_list = [ID for ID in mutant_list]
+    int_wt_list = [ID for ID in wt_list]
+    print(int_wt_list)
     genotype = []
-    
-    def check_availability(element, variables: iter):
-        return element in variables
     
     animal_numbers = results_dataframe['Animal_ID'] 
     animal_numbers = list(animal_numbers)
     for animal in animal_numbers:
-        if check_availability(animal, int_mutant_list):
-            genotype.append('EF1')
-        else:
+        if animal in int_wt_list:
             genotype.append('WT')
+        else:
+            genotype.append('EF1')
     
     genotype_df = pd.DataFrame({'Genotype': genotype})
     
