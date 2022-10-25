@@ -6,7 +6,7 @@ import scipy.stats as stats
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from ef1_alpha_properties import all_animals
+from scripts.ef1_alpha_properties import all_animals
 
 
 
@@ -35,12 +35,17 @@ def build_genotype_df(results_dataframe, mutant_list, wt_list):
 #parsing out individual channels
 
 def separate_by_channel(df, channel_number_list):
+    
     channel_1 = df[df['Channel'] == channel_number_list[0]]
     channel_2 = df[df['Channel'] == channel_number_list[1]]
     channel_3 = df[df['Channel'] == channel_number_list[2]]
-    channel_4 = df[df['Channel'] == channel_number_list[3]]    
-
-    return channel_1, channel_2, channel_3, channel_4
+    channel_4 = df[df['Channel'] == channel_number_list[3]]   
+    if len(channel_number_list) == 4:
+        return channel_1, channel_2, channel_3, channel_4
+    else:
+        channel_5 = df[df['Channel'] == channel_number_list[3]]
+        return channel_1, channel_2, channel_3, channel_4, channel_5
+    
 
 
 #parsing out by genotype
@@ -53,11 +58,10 @@ def separate_by_genotype(df, genotype, wildtype):
 
 #plot average genotype in selective channels 
 
-def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, data_rem, data_nrem, data_wake,
+def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data_rem, data_nrem, data_wake,
                                  ylim_lower, ylim_upper, save_path ):
     
     '''
-    channel_number = 2
     color_list = ['orange', 'blue']
     hue_order_list = ['EF1', 'WT']
     data_rem = dataframe containing rem data
@@ -87,13 +91,13 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
     plt.xlim(1, 100)
     plt.ylim(ylim_lower, ylim_upper)
 
-    plt.suptitle('Channel ' + str(channel_number), fontsize = 'x-large', fontweight = 'bold')
+    plt.suptitle(str(channel_group), fontsize = 'x-large', fontweight = 'bold')
     line_rem.title.set_text('REM')
     line_nrem.title.set_text('Non-REM')
     line_wake.title.set_text(' Wake')
 
     os.chdir(save_path )
-    plt.savefig('channel_' + str(channel_number) + '_average_genotype.jpg')
+    plt.savefig(str(channel_group) + '_average_genotype.jpg')
     
 def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
     wt_plot_list = ['191125A', '191126A', '191107A', '191108A', '191104B', '210422B_1',
