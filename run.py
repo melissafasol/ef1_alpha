@@ -11,7 +11,7 @@ from scipy import signal
 from preprocess import ExtractBrainStateEF1ALPHA
 from filter import Filter
 from power import PowerSpectrum, average_power_df
-from ef1_alpha_properties import recordings_1_channel, recordings_2_channels, channels_dict
+from ef1_alpha_properties import recordings_1_channel, recordings_2_channels, channels_dict, genotypes
 
 #paths 
 recording_path = '/home/melissa/PREPROCESSING/EF1_ALPHA'
@@ -47,9 +47,13 @@ for brainstate in brainstates:
                     power_steps = PowerSpectrum(filtered_data)
                     power_array, frequency_array = power_steps.average_psd()
                     print(str(anim_id) + str(headstage_letters))
+                    if anim_id + headstage_letters in genotypes['wildtypes']:
+                        genotype = 'WT'
+                    if anim_id + headstage_letters in genotypes['ef1_alpha_knockouts']:
+                        genotype = 'EF1'
                     dict_data = {'Animal_ID': [anim_id + headstage_letters]*len(power_array), 'Headstage':[headstage_letters]*len(power_array),
                             'Channel': [channel]*len(power_array), 'Brainstate': [brainstate]*len(power_array),
-                            'Power': power_array, 'Frequency': frequency_array}
+                            'Power': power_array, 'Frequency': frequency_array, 'Genotype' : [genotype]*len(frequency_array)}
                     df_test = pd.DataFrame(data = dict_data)
                     one_recording.append(pd.DataFrame(data = dict_data))
             else: 
@@ -77,9 +81,13 @@ for brainstate in brainstates:
                     filtered_data_1 = filter_steps.butter_bandpass()
                     power_steps = PowerSpectrum(filtered_data_1)
                     power_array_part_1, frequency_array_part_1 = power_steps.average_psd()
+                    if anim_id + headstage_letters in genotypes['wildtypes']:
+                        genotype = 'WT'
+                    if anim_id + headstage_letters in genotypes['ef1_alpha_knockouts']:
+                        genotype = 'EF1'
                     dict_data = {'Animal_ID': [anim_id + headstage_letters]*len(frequency_array_part_1), 'Headstage':[headstage_letters]*len(frequency_array_part_1),
                             'Channel': [channel]*len(frequency_array_part_1), 'Brainstate': [brainstate]*len(frequency_array_part_1),
-                            'Power': power_array_part_1, 'Frequency': frequency_array_part_1}
+                            'Power': power_array_part_1, 'Frequency': frequency_array_part_1, 'Genotype' : [genotype]*len(frequency_array_part_1)}
                     print('data saved for ' + str(anim_id))
                     two_recording.append(pd.DataFrame(data=dict_data))
             else:
@@ -92,9 +100,13 @@ for brainstate in brainstates:
                     filtered_data_2 = filter_steps.butter_bandpass()
                     power_steps = PowerSpectrum(filtered_data_2)
                     power_array_part_2, frequency_array_part_2 = power_steps.average_psd()
+                    if anim_id + headstage_letters in genotypes['wildtypes']:
+                        genotype = 'WT'
+                    if anim_id + headstage_letters in genotypes['ef1_alpha_knockouts']:
+                        genotype = 'EF1'
                     dict_data = {'Animal_ID': [anim_id + headstage_letters]*len(frequency_array_part_2), 'Headstage':[headstage_letters]*len(frequency_array_part_2),
                             'Channel': [channel]*len(frequency_array_part_2), 'Brainstate': [brainstate]*len(frequency_array_part_2),
-                             'Power': power_array_part_2, 'Frequency': frequency_array_part_2}
+                             'Power': power_array_part_2, 'Frequency': frequency_array_part_2, 'Genotype' : [genotype]*len(frequency_array_part_2)}
                     print('data saved for ' + str(anim_id))
                     two_recording.append(pd.DataFrame(data=dict_data))
             else:
