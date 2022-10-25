@@ -94,7 +94,7 @@ def plot_geno_average_by_channel(channel_number, color_list, hue_order_list, dat
     os.chdir(save_path )
     plt.savefig('channel_' + str(channel_number) + '_average_genotype.jpg')
     
-def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path):
+def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
     wt_plot_list = ['191125A', '191126A', '191107A', '191108A', '191104B', '210422B_1',
                 '210423B_1', '210705C', '210706C', '191216C', '210422D', '210423D']
     
@@ -102,24 +102,40 @@ def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_pat
         return row_idx * 4 + col_idx
     
     sns.set_style("white") 
-    fig, axs = plt.subplots(3,4, figsize=(10,10), sharex = True, sharey=True)
-    
-    palette_channel = ['orangered', 'darkred', 'teal', 'darkblue']
+    fig, axs = plt.subplots(3,4, figsize=(30,20), sharex = True, sharey=True)
     
     for row_idx in range(3):
         for col_idx in range(4):
             animal_idx = pos_idx_to_animal_idx(row_idx, col_idx)
             animal_data = dataframe_to_plot[dataframe_to_plot["Animal_ID"] == wt_plot_list[animal_idx]]
-            sns.lineplot(data=animal_data, x='Frequency', y='Power', hue='Channel', palette=palette_channel, ax=axs[row_idx, col_idx])
+            sns.lineplot(data=animal_data, x='Frequency', y='Power', hue='Channel', ax=axs[row_idx, col_idx],palette = palette_list)
             #axs[row_idx, col_idx].text(0.5, 0.5, wt_plot_list[animal_idx], fontsize=12) #test that plt functions are rendering correctly 
     
-    plt.suptitle(str(genotype) + ' ' + str(sleepstage), fontsize = 'x-large') 
+    plt.suptitle(str(genotype) + ' ' + str(sleepstage), fontsize = 30, fontweight = 'bold') 
 
     # Adjust subplots so that titles don't overlap
     sns.despine()
     plt.yscale('log')
-    axs.set_xlim(1, 100)
-    axs.set_ylim(10**-2, 10**5)
-    axs.set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
+    axs[2, 2].set_xlim(1, 100)
+    axs[2, 2].set_ylim(10**-2, 10**5)
+    axs[0,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[1,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[2,0].set(ylabel = 'PSD [V**2/Hz]')
+    axs[2,0].set(xlabel = 'Frequency (Hz)')
+    axs[2,1].set(xlabel = 'Frequency (Hz)')
+    axs[2,2].set(xlabel = 'Frequency (Hz)')
+    axs[2,3].set(xlabel = 'Frequency (Hz)')
+    
+    handles, labels = axs[0, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    handles, labels = axs[1, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    handles, labels = axs[2, 3].get_legend_handles_labels()
+    fig.legend(handles, labels, loc = 'upper center', frameon = False)
+    
+    for row_idx in range(3):
+        for col_idx in range(4):
+                axs[row_idx, col_idx].set_title(wt_plot_list[pos_idx_to_animal_idx(row_idx, col_idx)], 
+                                                fontsize = 10, fontweight = 'bold')
     os.chdir(save_path)
     plt.savefig(str(genotype) + '_' + str(sleepstage) + '_channelaverage' + '.jpg', bbox_inches = 'tight')
