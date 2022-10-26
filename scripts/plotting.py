@@ -98,21 +98,21 @@ def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data
     
 def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
     wt_plot_list_1 = ['210423D', '210705C', '210706C', '191216C']
-    #wt_plot_list_2 = ['191125A', '191126A', '191107A', '191104B']
-    #wt_plot_list_3 = [ '191108A', '210422B_1', '210423B_1', '191217C'] 
+    wt_plot_list_2 = ['191125A', '191126A', '191107A', '191104B']
+    wt_plot_list_3 = [ '191108A', '210422B_1', '210423B_1', '191217C'] 
     single =  [ '210422D'] 
     
-    plots_list = [wt_plot_list_1]#, wt_plot_list_2, wt_plot_list_3]
-    print
+    plots_list = [wt_plot_list_1, wt_plot_list_2, wt_plot_list_3]
+    
     
     def pos_idx_to_animal_idx(row_idx, col_idx):
         return row_idx * 2 + col_idx
     
-    sns.set_style("white") 
-    fig, axs = plt.subplots(2,2, figsize=(30,20), sharex = True, sharey=True)
     
     for plot in plots_list:
         print(plot)
+        sns.set_style("white") 
+        fig, axs = plt.subplots(2,2, figsize=(30,20), sharex = True, sharey=True)
         for row_idx in range(2):
             for col_idx in range(2):
                 animal_idx = pos_idx_to_animal_idx(row_idx, col_idx)
@@ -168,10 +168,9 @@ def plot_individual_animals_mutant(dataframe_to_plot, genotype, sleepstage, save
     def pos_idx_to_animal_idx(row_idx, col_idx):
         return row_idx * 2 + col_idx
     
-    sns.set_style("white") 
-    fig, axs = plt.subplots(2,2, figsize=(30,20), sharex = True, sharey=True)
-    
     for plot in plots_list:
+        sns.set_style("white") 
+        fig, axs = plt.subplots(2,2, figsize=(30,20), sharex = True, sharey=True)
         print(plot)
         for row_idx in range(2):
             for col_idx in range(2):
