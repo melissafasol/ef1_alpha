@@ -75,6 +75,11 @@ class ExtractBrainStateEF1ALPHA:
                 new_indices.append(i)
         
         return new_indices
+    
+    def get_seizure_indices(self, brain_state_file):
+        
+        seizure_indices = brain_state_file.loc[brain_state_file['epoch_discard_numbers'] == 'E'].index.tolist()
+        return seizure_indices
 
     def get_epoch_indices(self, new_indices):
         epoch_indices = []
