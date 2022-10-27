@@ -73,6 +73,19 @@ class ExtractBrainStateEF1ALPHA:
         
         if brainstate_number == 'seizure':
             new_indices = brainstate_file.loc[brainstate_file['epoch_discard_numbers'] == 'E'].index.tolist()
+            if len(new_indices) > 0:
+                starting_index = new_indices[0]
+                epoch_indices = []
+       
+            for epoch_index in range(len(new_indices)-1):
+                if new_indices[epoch_index] + 1 != new_indices[epoch_index + 1]:
+                    epoch_indices.append([starting_index, new_indices[epoch_index]])
+                    starting_index = new_indices[epoch_index + 1]
+
+                #append last value outside of the loop as the loop is for len -1
+            epoch_indices.append([starting_index, new_indices[-1]])
+            return epoch_indices
+        
         else:
             new_indices = []
             for i in brainstate_indices:
