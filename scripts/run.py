@@ -15,20 +15,19 @@ from ef1_alpha_properties import recordings_1_channel, recordings_2_channels, ch
 
 #paths 
 recording_path = '/home/melissa/PREPROCESSING/EF1_ALPHA'
-brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/brain_state_folder'
+brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/reformatted_brain_states'
 
 recordings_letters_1 =  ['A', 'A_1', 'B', 'C', 'D']
 recordings_letters_2 = ['A', 'A_1', 'B', 'B_1', 'C', 'D']
 recording_letters_notrunning_2 = ['A', 'B', 'D']
 recording_letters_notrunning_1 = ['C']
 
-one_recording = []
-two_recording = []
 
-brainstates = ['W']
+brainstates = ['R', 'N', 'W']
 
 
 # for brainstate in brainstates:
+#     one_recording = []
 #     for headstage_letters in recordings_letters_1:
 #         print(headstage_letters)
 #         for anim_id in recordings_1_channel[headstage_letters]:
@@ -37,10 +36,9 @@ brainstates = ['W']
 #                                                             headstage_letters, recording_number=1)
 #             npy_recording = preprocessing_steps.load_npy_recordings()
 #             br_state_file = preprocessing_steps.load_brain_state_file()
-#             br_state_indices = preprocessing_steps.remove_E_epochs(br_state_file, brain_state_letter = brainstate)
+#             br_state_indices = preprocessing_steps.process_brainstate_file(br_state_file, brainstate)
 #             if len(br_state_indices) > 0:
-#                 epoch_indices = preprocessing_steps.get_epoch_indices(br_state_indices)
-#                 epoch_bins = preprocessing_steps.create_epoch_bins(br_state_file, epoch_indices)    
+#                 epoch_bins = preprocessing_steps.create_epoch_bins(br_state_file, br_state_indices)    
 #                 for column, channel in zip(npy_recording.T, channels_dict[headstage_letters]):
 #                     filter_steps = Filter(column, epoch_bins)
 #                     filtered_data = filter_steps.butter_bandpass()
@@ -58,13 +56,14 @@ brainstates = ['W']
 #                     one_recording.append(pd.DataFrame(data = dict_data))
 #             else: 
 #                 print('no epochs for ' + str(anim_id) + ' ' + str(brainstate))
-# merged_power_file = pd.concat(one_recording, axis = 0).drop_duplicates().reset_index(drop = True)
-# os.chdir('/home/melissa/RESULTS/EF1_ALPHA/')
-# merged_power_file.to_csv(str(brainstate) + '_1_rec.csv', index = True)
-# print('data saved for one recording ' + str(brainstate))
+#     merged_power_file = pd.concat(one_recording, axis = 0).drop_duplicates().reset_index(drop = True)
+#     os.chdir('/home/melissa/RESULTS/EF1_ALPHA/debug')
+#     merged_power_file.to_csv(str(brainstate) + '_1_rec.csv', index = True)
+#     print('data saved for one recording ' + str(brainstate))
 
 
-for brainstate in brainstates:         
+for brainstate in brainstates: 
+    two_recording = []        
     for headstage_letters in recordings_letters_2:
         print(headstage_letters)
         for anim_id in recordings_2_channels[headstage_letters]:
@@ -72,11 +71,10 @@ for brainstate in brainstates:
             preprocessing_steps = ExtractBrainStateEF1ALPHA(anim_id, recording_path, brain_state_path, headstage_letters, recording_number=2)
             part_1, part_2 = preprocessing_steps.load_npy_recordings()
             part_1_br_state, part_2_br_state = preprocessing_steps.load_brain_state_file()
-            epoch_indices_1 = preprocessing_steps.remove_E_epochs(part_1_br_state, brainstate)
-            epoch_indices_2 = preprocessing_steps.remove_E_epochs(part_2_br_state, brainstate)
-            if len(epoch_indices_1) > 0:
-                epoch_1 = preprocessing_steps.get_epoch_indices(epoch_indices_1)
-                epoch_bins_1 = preprocessing_steps.create_epoch_bins(part_1_br_state, epoch_1)
+            epoch_indices_1 = preprocessing_steps.process_brainstate_file(part_1_br_state, brainstate)
+            epoch_indices_2 = preprocessing_steps.process_brainstate_file(part_2_br_state, brainstate)
+            if type(epoch_indices_1) == list:
+                epoch_bins_1 = preprocessing_steps.create_epoch_bins(part_1_br_state, epoch_indices_1)
                 for column, channel in zip(part_1.T, channels_dict[headstage_letters]):
                     filter_steps = Filter(column, epoch_bins_1)
                     filtered_data_1 = filter_steps.butter_bandpass()
@@ -94,8 +92,7 @@ for brainstate in brainstates:
             else:
                 print('no epochs for ' + str(anim_id) + ' ' + str(brainstate))
             if len(epoch_indices_2) > 0:
-                epoch_2 = preprocessing_steps.get_epoch_indices(epoch_indices_2)
-                epoch_bins_2 = preprocessing_steps.create_epoch_bins(part_2_br_state, epoch_2)
+                epoch_bins_2 = preprocessing_steps.create_epoch_bins(part_2_br_state, epoch_indices_2)
                 for column, channel in zip(part_2.T, channels_dict[headstage_letters]):
                     filter_steps = Filter(column, epoch_bins_2)
                     filtered_data_2 = filter_steps.butter_bandpass()
@@ -114,7 +111,7 @@ for brainstate in brainstates:
                 print('no epochs for ' + str(anim_id) + ' ' + str(brainstate))
             
             
-merged_power_file = pd.concat(two_recording, axis = 0).drop_duplicates().reset_index(drop = True)
-os.chdir('/home/melissa/RESULTS/EF1_ALPHA')
-merged_power_file.to_csv(str(brainstate) + '_2_rec.csv', index = True)
+    merged_power_file = pd.concat(two_recording, axis = 0).drop_duplicates().reset_index(drop = True)
+    os.chdir('/home/melissa/RESULTS/EF1_ALPHA/debug')
+    merged_power_file.to_csv(str(brainstate) + '_2_rec.csv', index = True)
     

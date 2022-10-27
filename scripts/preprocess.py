@@ -4,7 +4,7 @@ import numpy as np
 
 #path for loading recording files 
 recording_path = '/home/melissa/PREPROCESSING/EF1_ALPHA'
-brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/brain_state_folder'
+brain_state_path = '/home/melissa/PREPROCESSING/EF1_ALPHA/reformatted_brain_states'
 
  
 class ExtractBrainStateEF1ALPHA:
@@ -65,47 +65,47 @@ class ExtractBrainStateEF1ALPHA:
         
         #function to select brain state of interest and remove indices marked with E
 
-    def remove_E_epochs(self, brain_state_file, brain_state_letter):
-        
-        brain_state_indices = brain_state_file.loc[brain_state_file['brain_state'] == brain_state_letter].index.tolist()
-        discard_indices = brain_state_file.loc[brain_state_file['epoch_discard_numbers'] == 'E'].index.tolist()
-        new_indices = []
-        for i in brain_state_indices:
-            if i not in discard_indices:
-                new_indices.append(i)
-        
-        return new_indices
     
-    def get_seizure_indices(self, brain_state_file):
+    def process_brainstate_file(self, brainstate_file, brainstate_number):
+    
+        brainstate_indices = brainstate_file.loc[brainstate_file['brain_state'] == brainstate_number].index
+        discard_indices = brainstate_file.loc[brainstate_file['epoch_discard_numbers'] == 'E'].index.tolist()
         
-        seizure_indices = brain_state_file.loc[brain_state_file['epoch_discard_numbers'] == 'E'].index.tolist()
-        return seizure_indices
+        if brainstate_number == 'seizure':
+            new_indices = brainstate_file.loc[brainstate_file['epoch_discard_numbers'] == 'E'].index.tolist()
+        else:
+            new_indices = []
+            for i in brainstate_indices:
+                if i not in discard_indices:
+                    new_indices.append(i)
+        if len(new_indices) > 0:
+            starting_index = new_indices[0]
+            epoch_indices = []
+       
+            for epoch_index in range(len(new_indices)-1):
+                if new_indices[epoch_index] + 1 != new_indices[epoch_index + 1]:
+                    epoch_indices.append([starting_index, new_indices[epoch_index]])
+                    starting_index = new_indices[epoch_index + 1]
 
-    def get_epoch_indices(self, new_indices):
-        epoch_indices = []
-        starting_index = new_indices[0]
+                #append last value outside of the loop as the loop is for len -1
+            epoch_indices.append([starting_index, new_indices[-1]])
+            return epoch_indices
         
-        for i in range(len(new_indices)-1):
-            if new_indices[i] +1 != new_indices[i + 1]:
-                epoch_indices.append([starting_index, new_indices[i]])
-                starting_index = new_indices[i + 1]
-            else:
-                pass
+        else:
+            pass
 
-        epoch_indices.append([starting_index, new_indices[-1]])
         
-        return epoch_indices
 
     def create_epoch_bins(self, brain_state_file, epoch_indices):
         
         time_start_values = []
         time_end_values = []
         
-        for epoch_index in range(len(epoch_indices)):
-            time_start_values.append(brain_state_file.iloc[epoch_indices[epoch_index][0], 1])
+        for epoch_index in epoch_indices:
+            time_start_values.append(brain_state_file.iloc[epoch_index[0], 5])
         
-        for epoch_index in range(len(epoch_indices)):
-            time_end_values.append(brain_state_file.iloc[epoch_indices[epoch_index][1], 1])
+        for epoch_index in epoch_indices:
+            time_end_values.append(brain_state_file.iloc[epoch_index[1], 5])
 
         zipped_time_values = list(zip([int(element*self.sample_rate) for element in time_start_values],
                                     [int(element*self.sample_rate) for element in time_end_values]))
