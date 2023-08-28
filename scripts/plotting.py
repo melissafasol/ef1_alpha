@@ -62,6 +62,8 @@ def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data
     color_list = ['orange', 'blue']
     hue_order_list = ['EF1', 'WT']
     data_rem = dataframe containing rem data
+    data_nrem = dataframe containing nrem data
+    data_wake = dataframe containing wake data
     ylim_lower = 10**-2
     ylim_upper = 10**5
     save_path = path to save folder
@@ -72,14 +74,14 @@ def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data
     hue_order = hue_order_list
 
     #f.suptitle('REM', fontsize = 36)
-    fig, ax = plt.subplots(1,3, figsize=(20,10), sharex = True, sharey=True)
-    line_rem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_rem, 
+    fig, ax = plt.subplots(1,3, figsize=(20,8), sharex = True, sharey=True)
+    line_rem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, errorbar = ('ci', 95), data = data_rem, 
                             palette= colors, linewidth = 2, ax = ax[0])
     ax[0].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
-    line_nrem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_nrem, 
+    line_nrem = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, errorbar= ('ci', 95), data = data_nrem, 
                              palette= colors, linewidth = 2, ax = ax[1])
     ax[1].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
-    line_wake = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, ci= 95, data = data_wake, 
+    line_wake = sns.lineplot(x= 'Frequency', y='Power', hue='Genotype', hue_order = hue_order, errorbar= ('ci', 95), data = data_wake, 
                              palette= colors, linewidth = 2, ax = ax[2])
     ax[2].set(xlabel = 'Frequency (Hz)', ylabel = 'PSD [V**2/Hz]')
 
@@ -94,7 +96,7 @@ def plot_geno_average_by_channel(channel_group, color_list, hue_order_list, data
     line_wake.title.set_text(' Wake')
 
     os.chdir(save_path )
-    plt.savefig(str(channel_group) + '_average_genotype.jpg')
+    plt.savefig(str(channel_group) + '_average_genotype.svg')
     
 def plot_individual_animals_wt(dataframe_to_plot, genotype, sleepstage, save_path, palette_list):
     wt_plot_list_1 = ['210423D', '210705C', '210706C', '191216C']
