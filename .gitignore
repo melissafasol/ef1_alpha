@@ -4,8 +4,6 @@ __pycache__
 convert_raw_to_npy.ipynb 
 brain_state_extraction.ipynb
 
-
-plotting_geno_averages.ipynb
 plotting_per_animal.ipynb
 plotting_seizure_data.ipynb
 __pycache__
