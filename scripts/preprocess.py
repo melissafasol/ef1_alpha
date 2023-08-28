@@ -129,6 +129,23 @@ class ExtractBrainStateEF1ALPHA:
         timevalues_array = list(np.concatenate(timevalues_epochs).flat)
         timevalues_array = [int(x) for x in timevalues_array]
         return timevalues_array
+    
+    
+    def seizure_epoch_bins(self, file_path, brain_state_file):
+        
+        seizure_times = pd.read_csv(file_path + brain_state_file)
+        seizure_start = seizure_times.iloc[:, 1]
+        seizure_end = seizure_times.iloc[:, 2]
+
+        zipped_time_values = list(zip([int(element*self.sample_rate) for element in seizure_start],
+                                    [int(element*self.sample_rate) for element in seizure_end]))
+        
+        function_timebins = lambda epoch_start, epoch_end : list(range(epoch_start, epoch_end, self.epoch_length))
+        
+        timevalues_epochs = list(map(lambda x: function_timebins(x[0], x[1]), (zipped_time_values)))
+        timevalues_array = list(np.concatenate(timevalues_epochs).flat)
+        timevalues_array = [int(x) for x in timevalues_array]
+        return timevalues_array
 
 def preprocessing_steps_1(brainstate_list, headstage_dict, animal_id_list,
                         recording_path, brain_state_path, recording_number):
